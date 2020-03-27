@@ -1,23 +1,32 @@
-package com.example.demo;
+package com.oneapm.alter;
 
 import java.io.IOException;
 import java.util.Properties;
 
 import org.quartz.Scheduler;
+
 import org.quartz.ee.servlet.QuartzInitializerListener;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.PropertiesFactoryBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.io.ClassPathResource;
+import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.quartz.SchedulerFactoryBean;
 
 @Configuration
+@EnableScheduling
 public class SchedulerConfig {
+
+
+    @Autowired
+    private MySpringJobFactory mySpringJobFactory;
 
     @Bean(name="SchedulerFactory")
     public SchedulerFactoryBean schedulerFactoryBean() throws IOException {
         SchedulerFactoryBean factory = new SchedulerFactoryBean();
         factory.setQuartzProperties(quartzProperties());
+        factory.setJobFactory(mySpringJobFactory);
         return factory;
     }
 
@@ -37,7 +46,9 @@ public class SchedulerConfig {
     public QuartzInitializerListener executorListener() {
        return new QuartzInitializerListener();
     }
-    
+
+
+
     /*
      * 通过SchedulerFactoryBean获取Scheduler的实例
      */

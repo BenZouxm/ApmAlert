@@ -1,8 +1,10 @@
-package com.example.demo.controller;
+package com.oneapm.alter.controller;
 
 import java.util.HashMap;
 import java.util.Map;
 
+import com.oneapm.alter.utl.BaseException;
+import lombok.extern.slf4j.Slf4j;
 import org.quartz.CronScheduleBuilder;
 import org.quartz.CronTrigger;
 import org.quartz.JobBuilder;
@@ -12,22 +14,19 @@ import org.quartz.Scheduler;
 import org.quartz.SchedulerException;
 import org.quartz.TriggerBuilder;
 import org.quartz.TriggerKey;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
-import com.example.demo.entity.JobAndTrigger;
-import com.example.demo.job.BaseJob;
-import com.example.demo.service.IJobAndTriggerService;
+import com.oneapm.alter.entity.JobAndTrigger;
+import com.oneapm.alter.job.BaseJob;
+import com.oneapm.alter.service.IJobAndTriggerService;
 import com.github.pagehelper.PageInfo;
 
+import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServletRequest;
 
+@Slf4j
 @RestController
 @RequestMapping(value="/job")
 public class JobController 
@@ -38,8 +37,7 @@ public class JobController
 	//加入Qulifier注解，通过名称注入bean
 	@Autowired @Qualifier("Scheduler")
 	private Scheduler scheduler;
-	
-	private static Logger log = LoggerFactory.getLogger(JobController.class);  
+
 	
 
 	@PostMapping(value="/addjob")
@@ -49,7 +47,29 @@ public class JobController
 	{			
 		addJob(jobClassName, jobGroupName, cronExpression);
 	}
-	
+
+//	@ExceptionHandler(value = BaseException.class)
+//	@PostMapping(value="/test")
+//	@ResponseBody
+//	public String test() throws Exception
+//	{
+//		return "hello world";
+//	}
+//
+//
+//	@ExceptionHandler(value = BaseException.class)
+//	@RequestMapping(value="/debug")
+//	@ResponseBody
+//	public void debug(HttpServletRequest request) {
+//		for (Cookie cookie : request.getCookies()) {
+//			if ("myCookie".equals(cookie.getName())) {
+//				System.out.println(cookie.getValue());
+//			}
+//		}
+//	}
+
+
+
 	public void addJob(String jobClassName, String jobGroupName, String cronExpression)throws Exception{
         
         // 启动调度器  
@@ -70,6 +90,7 @@ public class JobController
             
         } catch (SchedulerException e) {
             System.out.println("创建定时任务失败"+e);
+			log.error("创建定时任务失败，任务参数为"+jobClassName+",对应的错误信息为："+e);
             throw new Exception("创建定时任务失败");
         }
 	}

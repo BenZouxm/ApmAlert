@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >  
+<mapper namespace="com.oneapm.alter.dao.AlertRecordMapper">
+    
+    <insert id="saveAlterRecord"  parameterType="com.oneapm.alter.entity.AlertRecord">
+		INSERT INTO ALERT_RECORD (RECORD,RECVTIME,SENDTIME,ISSEND,SENDREP,ALERTID,ALERTSOURECODE)
+    VALUES (#{record},
+	#{recvTime},
+	#{sendTime},
+	#{isSend},#{sendRep},#{alertId},#{alertSoureCode})
+    </insert>
+
+	<select id="getUnsentAlertRecord" resultType="com.oneapm.alter.entity.AlertRecord">
+		SELECT  ID as id,
+          ALERTID as alertId,
+          RECORD as record,
+          RECVTIME as recvTime,
+          SENDTIME as sendTime,
+          ISSEND as isSend,
+          SENDREP as sendRep,
+          ALERTSOURECODE as alertSource,
+          RESENDTIMES  as reSendTimes
+		FROM ALERT_RECORD WHERE ISSEND = FALSE AND RECVTIME &gt; #{beginDate} AND RESENDTIMES &lt; #{reSendTimes}
+	</select>
+
+	<update id="updateAlterRecord" parameterType="com.oneapm.alter.entity.AlertRecord">
+      update ALERT_RECORD SET
+      SENDTIME=#{sendTime} ,ISSEND=#{isSend},SENDREP=#{sendRep}, RESENDTIMES=#{reSendTimes} WHERE ID=#{id}
+	</update>
+    
+</mapper>
