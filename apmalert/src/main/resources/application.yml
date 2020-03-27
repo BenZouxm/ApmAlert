@@ -1,8 +1,8 @@
 spring:
   datasource:
     url: jdbc:mysql://106.52.234.126:3306/qzDS?useUnicode=true&useSSL=true
-    username: root
-    password: benben425_ximi
+    username: ****
+    password: ******
     driver-class-name: com.mysql.jdbc.Driver
     max-idle: 10
     max-wait: 10000
